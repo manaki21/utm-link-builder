@@ -80,9 +80,9 @@ export default function Home() {
     >
       <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-0"></div>
       <div className="relative z-10 w-full flex flex-col items-center">
-        <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+        <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
           <h1 className="text-2xl font-bold text-primary mb-4 text-center" style={{ fontFamily: 'Comfortaa, cursive' }}>UTM Link Builder</h1>
-          <div className="space-y-4">
+          <div className="space-y-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
             <div>
               <label className="block font-medium mb-1">Base URL <span className="text-accent">*</span></label>
               <input
@@ -157,11 +157,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-
         {/* History Section */}
         <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-primary">History</h2>
+            <h2 className="text-xl font-bold text-primary" style={{ fontFamily: 'Comfortaa, cursive' }}>History</h2>
             <button
               className="text-accent underline"
               onClick={clearAll}
