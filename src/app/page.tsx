@@ -22,8 +22,14 @@ export default function Home() {
   const [utmUrl, setUtmUrl] = useState("");
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [search, setSearch] = useState("");
+  const [applied, setApplied] = useState(false);
 
   useEffect(() => {
+    const saved = localStorage.getItem("utm_history");
+    if (saved) setHistory(JSON.parse(saved));
+  }, []);
+
+  const generateUtmUrl = () => {
     const params = new URLSearchParams();
     if (source) params.set("utm_source", source);
     if (medium) params.set("utm_medium", medium);
@@ -33,16 +39,13 @@ export default function Home() {
       url += (baseUrl.includes("?") ? "&" : "?") + params.toString();
     }
     setUtmUrl(url);
-  }, [baseUrl, source, medium, campaign]);
+    setApplied(true);
+    saveToHistory(url);
+  };
 
-  useEffect(() => {
-    const saved = localStorage.getItem("utm_history");
-    if (saved) setHistory(JSON.parse(saved));
-  }, []);
-
-  const saveToHistory = () => {
-    if (!utmUrl || !campaign) return;
-    const newItem = { url: utmUrl, campaign, timestamp: Date.now() };
+  const saveToHistory = (url: string) => {
+    if (!url || !campaign) return;
+    const newItem = { url, campaign, timestamp: Date.now() };
     const newHistory = [newItem, ...history].slice(0, 50);
     setHistory(newHistory);
     localStorage.setItem("utm_history", JSON.stringify(newHistory));
@@ -68,129 +71,147 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
-      <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
-        <h1 className="text-2xl font-bold text-primary mb-4 text-center">UTM Link Builder</h1>
-        <div className="space-y-4">
-          <div>
-            <label className="block font-medium mb-1">Base URL <span className="text-accent">*</span></label>
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="https://yourwebsite.com/page"
-              value={baseUrl}
-              onChange={e => setBaseUrl(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label className="block font-medium mb-1">Source</label>
-              <select
-                className="w-full border rounded px-3 py-2"
-                value={source}
-                onChange={e => setSource(e.target.value)}
-              >
-                {SOURCES.map(s => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
+    <main
+      className="min-h-screen flex flex-col items-center p-4 relative"
+      style={{
+        backgroundImage: "url('/background.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-0"></div>
+      <div className="relative z-10 w-full flex flex-col items-center">
+        <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
+          <h1 className="text-2xl font-bold text-primary mb-4 text-center">UTM Link Builder</h1>
+          <div className="space-y-4">
+            <div>
+              <label className="block font-medium mb-1">Base URL <span className="text-accent">*</span></label>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="https://yourwebsite.com/page"
+                value={baseUrl}
+                onChange={e => { setBaseUrl(e.target.value); setApplied(false); }}
+                required
+              />
             </div>
-            <div className="flex-1">
-              <label className="block font-medium mb-1">Medium</label>
-              <select
-                className="w-full border rounded px-3 py-2"
-                value={medium}
-                onChange={e => setMedium(e.target.value)}
-              >
-                {MEDIUMS.map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block font-medium mb-1">Source</label>
+                <select
+                  className="w-full border rounded px-3 py-2"
+                  value={source}
+                  onChange={e => { setSource(e.target.value); setApplied(false); }}
+                >
+                  {SOURCES.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1">
+                <label className="block font-medium mb-1">Medium</label>
+                <select
+                  className="w-full border rounded px-3 py-2"
+                  value={medium}
+                  onChange={e => { setMedium(e.target.value); setApplied(false); }}
+                >
+                  {MEDIUMS.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Campaign</label>
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2"
-              placeholder="e.g. q4_launch"
-              value={campaign}
-              onChange={e => setCampaign(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="mt-6">
-          <label className="block font-medium mb-1">UTM Link</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2 bg-gray-100"
-              value={utmUrl}
-              readOnly
-            />
+            <div>
+              <label className="block font-medium mb-1">Campaign</label>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                placeholder="e.g. q4_launch"
+                value={campaign}
+                onChange={e => { setCampaign(e.target.value); setApplied(false); }}
+              />
+            </div>
             <button
-              className="bg-primary text-white px-4 py-2 rounded hover:bg-accent transition"
-              onClick={() => { copyToClipboard(utmUrl); saveToHistory(); }}
-              disabled={!utmUrl}
+              className="bg-accent text-white px-4 py-2 rounded hover:bg-primary transition w-full font-bold mt-2"
+              onClick={generateUtmUrl}
+              disabled={!baseUrl}
             >
-              Copy
+              Apply
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* History Section */}
-      <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-primary">History</h2>
-          <button
-            className="text-accent underline"
-            onClick={clearAll}
-            disabled={history.length === 0}
-          >
-            Clear All
-          </button>
-        </div>
-        <input
-          type="text"
-          className="w-full border rounded px-3 py-2 mb-4"
-          placeholder="Search by campaign..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        <div className="space-y-2 max-h-64 overflow-y-auto">
-          {filteredHistory.length === 0 && (
-            <div className="text-gray-400 text-center">No history yet.</div>
-          )}
-          {filteredHistory.map(item => (
-            <div key={item.timestamp} className="flex items-center justify-between bg-gray-50 border rounded px-3 py-2">
-              <div>
-                <div className="font-medium">{item.campaign}</div>
-                <div className="text-xs text-gray-500">{new Date(item.timestamp).toLocaleString()}</div>
-                <div className="text-xs text-blue-700 break-all">{item.url}</div>
-              </div>
-              <div className="flex flex-col gap-2 ml-2">
-                <button
-                  className="bg-primary text-white px-2 py-1 rounded text-xs"
-                  onClick={() => copyToClipboard(item.url)}
-                >
-                  Copy
-                </button>
-                <button
-                  className="text-accent text-xs underline"
-                  onClick={() => deleteHistoryItem(item.timestamp)}
-                >
-                  Delete
-                </button>
-              </div>
+          <div className="mt-6">
+            <label className="block font-medium mb-1">UTM Link</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2 bg-gray-100"
+                value={utmUrl}
+                readOnly
+              />
+              <button
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-accent transition"
+                onClick={() => copyToClipboard(utmUrl)}
+                disabled={!utmUrl}
+              >
+                Copy
+              </button>
             </div>
-          ))}
+          </div>
         </div>
+
+        {/* History Section */}
+        <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-primary">History</h2>
+            <button
+              className="text-accent underline"
+              onClick={clearAll}
+              disabled={history.length === 0}
+            >
+              Clear All
+            </button>
+          </div>
+          <input
+            type="text"
+            className="w-full border rounded px-3 py-2 mb-4"
+            placeholder="Search by campaign..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {filteredHistory.length === 0 && (
+              <div className="text-gray-400 text-center">No history yet.</div>
+            )}
+            {filteredHistory.map(item => (
+              <div key={item.timestamp} className="flex items-center justify-between bg-gray-50 border rounded px-3 py-2">
+                <div>
+                  <div className="font-medium">{item.campaign}</div>
+                  <div className="text-xs text-gray-500">{new Date(item.timestamp).toLocaleString()}</div>
+                  <div className="text-xs text-blue-700 break-all">{item.url}</div>
+                </div>
+                <div className="flex flex-col gap-2 ml-2">
+                  <button
+                    className="bg-primary text-white px-2 py-1 rounded text-xs"
+                    onClick={() => copyToClipboard(item.url)}
+                  >
+                    Copy
+                  </button>
+                  <button
+                    className="text-accent text-xs underline"
+                    onClick={() => deleteHistoryItem(item.timestamp)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <footer className="mt-8 text-center text-gray-400 text-xs">
+          &copy; {new Date().getFullYear()} UTM Link Builder
+        </footer>
       </div>
-      <footer className="mt-8 text-center text-gray-400 text-xs">
-        &copy; {new Date().getFullYear()} UTM Link Builder
-      </footer>
     </main>
   );
 }

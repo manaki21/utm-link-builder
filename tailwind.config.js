@@ -12,6 +12,10 @@ module.exports = {
         primary: "#273B7A",
         accent: "#E93F33",
       },
+      fontFamily: {
+        heading: ["Comfortaa", "cursive"],
+        body: ["Open Sans", "sans-serif"],
+      },
     },
   },
   plugins: [],
