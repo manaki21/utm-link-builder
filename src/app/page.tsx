@@ -70,95 +70,86 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center p-4 relative"
-      style={{
-        backgroundImage: "url('/background.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
+      className="min-h-screen flex items-center justify-center bg-[#785aef] p-4"
     >
-      <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-0"></div>
-      <div className="relative z-10 w-full flex flex-col items-center">
-        <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
-          <h1 className="text-2xl font-bold text-primary mb-4 text-center" style={{ fontFamily: 'Comfortaa, cursive' }}>UTM Link Builder</h1>
-          <div className="space-y-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-            <div>
-              <label className="block font-medium mb-1">Base URL <span className="text-accent">*</span></label>
-              <input
-                type="text"
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="https://yourwebsite.com/page"
-                value={baseUrl}
-                onChange={e => { setBaseUrl(e.target.value); }}
-                required
-              />
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block font-medium mb-1">Source</label>
-                <select
-                  className="w-full border rounded px-3 py-2"
-                  value={source}
-                  onChange={e => { setSource(e.target.value); }}
-                >
-                  {SOURCES.map(s => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex-1">
-                <label className="block font-medium mb-1">Medium</label>
-                <select
-                  className="w-full border rounded px-3 py-2"
-                  value={medium}
-                  onChange={e => { setMedium(e.target.value); }}
-                >
-                  {MEDIUMS.map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block font-medium mb-1">Campaign</label>
-              <input
-                type="text"
-                className="w-full border rounded px-3 py-2"
-                placeholder="e.g. q4_launch"
-                value={campaign}
-                onChange={e => { setCampaign(e.target.value); }}
-              />
-            </div>
-            <button
-              className="bg-accent text-white px-4 py-2 rounded hover:bg-primary transition w-full font-bold mt-2"
-              onClick={generateUtmUrl}
-              disabled={!baseUrl}
-            >
-              Apply
-            </button>
+      <div className="w-full max-w-xl bg-white rounded-lg shadow p-6">
+        <h1 className="text-2xl font-bold text-primary mb-4 text-center" style={{ fontFamily: 'Comfortaa, cursive' }}>UTM Link Builder</h1>
+        <div className="space-y-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+          <div>
+            <label className="block font-medium mb-1">Base URL <span className="text-accent">*</span></label>
+            <input
+              type="text"
+              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="https://yourwebsite.com/page"
+              value={baseUrl}
+              onChange={e => { setBaseUrl(e.target.value); }}
+              required
+            />
           </div>
-          <div className="mt-6">
-            <label className="block font-medium mb-1">UTM Link</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                className="w-full border rounded px-3 py-2 bg-gray-100"
-                value={utmUrl}
-                readOnly
-              />
-              <button
-                className="bg-primary text-white px-4 py-2 rounded hover:bg-accent transition"
-                onClick={() => copyToClipboard(utmUrl)}
-                disabled={!utmUrl}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block font-medium mb-1">Source</label>
+              <select
+                className="w-full border rounded px-3 py-2"
+                value={source}
+                onChange={e => { setSource(e.target.value); }}
               >
-                Copy
-              </button>
+                {SOURCES.map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
             </div>
+            <div className="flex-1">
+              <label className="block font-medium mb-1">Medium</label>
+              <select
+                className="w-full border rounded px-3 py-2"
+                value={medium}
+                onChange={e => { setMedium(e.target.value); }}
+              >
+                {MEDIUMS.map(m => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block font-medium mb-1">Campaign</label>
+            <input
+              type="text"
+              className="w-full border rounded px-3 py-2"
+              placeholder="e.g. q4_launch"
+              value={campaign}
+              onChange={e => { setCampaign(e.target.value); }}
+            />
+          </div>
+          <button
+            className="bg-accent text-white px-4 py-2 rounded hover:bg-primary transition w-full font-bold mt-2"
+            onClick={generateUtmUrl}
+            disabled={!baseUrl}
+          >
+            Apply
+          </button>
+        </div>
+        <div className="mt-6">
+          <label className="block font-medium mb-1">UTM Link</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              className="w-full border rounded px-3 py-2 bg-gray-100"
+              value={utmUrl}
+              readOnly
+            />
+            <button
+              className="bg-primary text-white px-4 py-2 rounded hover:bg-accent transition"
+              onClick={() => copyToClipboard(utmUrl)}
+              disabled={!utmUrl}
+            >
+              Copy
+            </button>
           </div>
         </div>
         {/* History Section */}
-        <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
+        <div className="w-full bg-white rounded-lg shadow p-6 mt-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-primary" style={{ fontFamily: 'Comfortaa, cursive' }}>History</h2>
             <button
