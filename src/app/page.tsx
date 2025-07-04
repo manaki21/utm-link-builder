@@ -22,7 +22,6 @@ export default function Home() {
   const [utmUrl, setUtmUrl] = useState("");
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [search, setSearch] = useState("");
-  const [applied, setApplied] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("utm_history");
@@ -39,7 +38,6 @@ export default function Home() {
       url += (baseUrl.includes("?") ? "&" : "?") + params.toString();
     }
     setUtmUrl(url);
-    setApplied(true);
     saveToHistory(url);
   };
 
@@ -82,8 +80,8 @@ export default function Home() {
     >
       <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-0"></div>
       <div className="relative z-10 w-full flex flex-col items-center">
-        <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8">
-          <h1 className="text-2xl font-bold text-primary mb-4 text-center">UTM Link Builder</h1>
+        <div className="w-full max-w-xl bg-white rounded-lg shadow p-6 mt-8" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+          <h1 className="text-2xl font-bold text-primary mb-4 text-center" style={{ fontFamily: 'Comfortaa, cursive' }}>UTM Link Builder</h1>
           <div className="space-y-4">
             <div>
               <label className="block font-medium mb-1">Base URL <span className="text-accent">*</span></label>
@@ -92,7 +90,7 @@ export default function Home() {
                 className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="https://yourwebsite.com/page"
                 value={baseUrl}
-                onChange={e => { setBaseUrl(e.target.value); setApplied(false); }}
+                onChange={e => { setBaseUrl(e.target.value); }}
                 required
               />
             </div>
@@ -102,7 +100,7 @@ export default function Home() {
                 <select
                   className="w-full border rounded px-3 py-2"
                   value={source}
-                  onChange={e => { setSource(e.target.value); setApplied(false); }}
+                  onChange={e => { setSource(e.target.value); }}
                 >
                   {SOURCES.map(s => (
                     <option key={s} value={s}>{s}</option>
@@ -114,7 +112,7 @@ export default function Home() {
                 <select
                   className="w-full border rounded px-3 py-2"
                   value={medium}
-                  onChange={e => { setMedium(e.target.value); setApplied(false); }}
+                  onChange={e => { setMedium(e.target.value); }}
                 >
                   {MEDIUMS.map(m => (
                     <option key={m} value={m}>{m}</option>
@@ -129,7 +127,7 @@ export default function Home() {
                 className="w-full border rounded px-3 py-2"
                 placeholder="e.g. q4_launch"
                 value={campaign}
-                onChange={e => { setCampaign(e.target.value); setApplied(false); }}
+                onChange={e => { setCampaign(e.target.value); }}
               />
             </div>
             <button
